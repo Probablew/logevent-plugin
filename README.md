@@ -14,7 +14,7 @@ Make sure you have **OP** or the **logevent.use** permission, and then use the `
    - `end distance`: (Optional) The final size of the world border (in blocks) at the end of the event.
    - `start distance`: (Optional) The initial size of the world border (in blocks) at the start of the event.
      - **Note:** If `end distance` and `start distance` are provided, the world border will smoothly shrink from `start distance` to `end distance` over 90% of the event duration.
-     - **Note:** If `end distance` and `start distance` are omitted, the world border will remain static.
+     - **Note:** If `end distance` and `start distance` are excluded, the world border will remain static.
      - **Note:** When the command is run, all players will be killed, and the start message will be broadcasted to everyone.
 
 ### - `/logevent stop`
