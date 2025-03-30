@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -113,6 +115,7 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
         }
 
         killAllPlayers();
+        killAllItems(world);
         broadcastInterval = totalTime / 5;
 
         eventTask = new BukkitRunnable() {
@@ -139,14 +142,22 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
         }
     }
 
+    private void killAllItems(World world) {
+        for (Entity entity : world.getEntities()) {
+            if (entity instanceof Item) {
+                entity.remove();
+            }
+        }
+    }
+
     private void stopEvent() {
         if (eventTask != null) {
             eventTask.cancel();
         }
         if (eventRunning) {
             World world = Bukkit.getWorlds().get(0);
-            if (Bukkit.getOnlinePlayers().size() > 0) { // Corrected line
-                world = Bukkit.getOnlinePlayers().iterator().next().getWorld(); // Get first player world
+            if (Bukkit.getOnlinePlayers().size() > 0) {
+                world = Bukkit.getOnlinePlayers().iterator().next().getWorld();
             }
             world.getWorldBorder().setSize(world.getWorldBorder().getSize());
             countPlayerLogs();

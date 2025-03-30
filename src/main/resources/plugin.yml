@@ -1,5 +1,5 @@
 name: LogEvent
-version: '1.0.1'
+version: '1.0.2'
 main: hu.thepingu.logEvent.LogEvent
 authors: [ThePingu]
 description: A plugin for hosting simple log events
