@@ -2,7 +2,7 @@
 
 ## **Setup:** You just download the `LogEvent.jar` file, put it in your server's `plugins` folder, and restart or reload the server.
 
-### (The plugin is designed for Spigot/Bukkit 1.8.x)
+### (The plugin is designed for Spigot/Bukkit 1.8.x, but works perfectly with Paper too)
 
 ## **How to use the plugin:**
 Make sure you have **OP** or the **logevent.use** permission, and then use the `/logevent` command.
