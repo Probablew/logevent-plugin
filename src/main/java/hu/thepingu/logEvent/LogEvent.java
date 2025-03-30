@@ -24,6 +24,7 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
     private int endDistance;
     private int startDistance;
     private int broadcastInterval;
+    private boolean borderShrink = true;
 
     @Override
     public void onEnable() {
@@ -50,21 +51,36 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
-            if (args.length < 4) {
-                sender.sendMessage(ChatColor.YELLOW + "Usage: /logevent start <minutes> <end distance> <start distance>");
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.YELLOW + "Usage: /logevent start <minutes> [end distance] [start distance]");
                 return true;
             }
 
             try {
                 int minutes = Integer.parseInt(args[1]);
-                endDistance = Integer.parseInt(args[2]);
-                startDistance = Integer.parseInt(args[3]);
+                borderShrink = true;
+
+                if (args.length >= 4) {
+                    endDistance = Integer.parseInt(args[2]);
+                    startDistance = Integer.parseInt(args[3]);
+                } else {
+                    borderShrink = false;
+                }
+
                 World world = Bukkit.getWorlds().get(0);
                 if (sender instanceof Player) {
                     world = ((Player) sender).getWorld();
                 }
                 startEvent(world, minutes * 60, endDistance, startDistance);
-                Bukkit.broadcastMessage(ChatColor.GREEN + "Log event started for " + minutes + " minutes with border going from " + startDistance + " to " + endDistance + "!"); // Broadcast message
+
+                String startMessage = "Log event started for " + minutes + " minutes";
+                if (borderShrink) {
+                    startMessage += " with border going from " + startDistance + " to " + endDistance + "!";
+                } else {
+                    startMessage += " with a static border!";
+                }
+
+                Bukkit.broadcastMessage(ChatColor.GREEN + startMessage);
             } catch (NumberFormatException e) {
                 sender.sendMessage(ChatColor.RED + "Invalid number format.");
             }
@@ -91,9 +107,12 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
         this.endDistance = endDistance;
         this.startDistance = startDistance;
 
-        world.getWorldBorder().setSize(startDistance);
+        if (borderShrink) {
+            world.getWorldBorder().setSize(startDistance);
+            world.getWorldBorder().setSize(endDistance, (long) (time * 0.9));
+        }
+
         killAllPlayers();
-        world.getWorldBorder().setSize(endDistance, (long) (time * 0.9));
         broadcastInterval = totalTime / 5;
 
         eventTask = new BukkitRunnable() {
@@ -125,6 +144,11 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
             eventTask.cancel();
         }
         if (eventRunning) {
+            World world = Bukkit.getWorlds().get(0);
+            if (Bukkit.getOnlinePlayers().size() > 0) { // Corrected line
+                world = Bukkit.getOnlinePlayers().iterator().next().getWorld(); // Get first player world
+            }
+            world.getWorldBorder().setSize(world.getWorldBorder().getSize());
             countPlayerLogs();
         }
         eventRunning = false;
@@ -194,7 +218,7 @@ public final class LogEvent extends JavaPlugin implements CommandExecutor {
         sender.sendMessage(ChatColor.YELLOW + "LogEvent Plugin Help:");
         sender.sendMessage(ChatColor.YELLOW + "Author: ThePingu");
         sender.sendMessage(ChatColor.YELLOW + "Version: " + getDescription().getVersion());
-        sender.sendMessage(ChatColor.YELLOW + "/logevent start <minutes> <end distance> <start distance> - Starts a log event.");
+        sender.sendMessage(ChatColor.YELLOW + "/logevent start <minutes> [end distance] [start distance] - Starts a log event.");
         sender.sendMessage(ChatColor.YELLOW + "/logevent stop - Stops a log event.");
         sender.sendMessage(ChatColor.YELLOW + "/logevent help - Displays this help message.");
     }
