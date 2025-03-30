@@ -1,0 +1,14 @@
+name: LogEvent
+version: '1.0.0'
+main: hu.thepingu.logEvent.LogEvent
+authors: [ThePingu]
+description: A plugin for hosting simple log events
+commands:
+  logevent:
+    description: Starts or stops the log event
+    usage: /logevent <start|stop> [time] [distance]
+    permission: logevent.use
+permissions:
+  logevent.use:
+    description: Allows a player to start and stop the log event
+    default: op
